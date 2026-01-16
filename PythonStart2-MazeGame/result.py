@@ -1,17 +1,10 @@
 from pygame import *
-' ' 'Required classes' ' '
 
-#parent class for sprites 
 class GameSprite(sprite.Sprite):
-    #class constructor
     def __init__(self, player_image, player_x, player_y, player_speed):
         super().__init__()
- 
-        #every sprite must store the image property
         self.image = transform.scale(image.load(player_image), (55, 55))
         self.speed = player_speed
- 
-        #every sprite must have the rect property – the rectangle it is fitted in
         self.rect = self.image.get_rect()
         self.rect.x = player_x
         self.rect.y = player_y
@@ -23,13 +16,13 @@ class GameSprite(sprite.Sprite):
 class Player(GameSprite):
     def update(self):
         keys = key.get_pressed()
-        if keys[K_LEFT] and self.rect.x > 5:
+        if keys[K_a] and self.rect.x > 5:
             self.rect.x -= self.speed
-        if keys[K_RIGHT] and self.rect.x < win_width - 80:
+        if keys[K_d] and self.rect.x < win_width - 80:
             self.rect.x += self.speed
-        if keys[K_UP] and self.rect.y > 5:
+        if keys[K_w] and self.rect.y > 5:
             self.rect.y -= self.speed
-        if keys[K_DOWN] and self.rect.y < win_height - 80:
+        if keys[K_s] and self.rect.y < win_height - 80:
             self.rect.y += self.speed
 
 #heir class for the enemy sprite (moves by itself)
@@ -74,20 +67,20 @@ win_width = 700
 win_height = 500
 window = display.set_mode((win_width, win_height))
 display.set_caption("Maze")
-background = transform.scale(image.load("background.jpg"), (win_width, win_height))
+background = transform.scale(image.load("PythonStart2-MazeGame/background.jpg"), (win_width, win_height))
 
-w1 = Wall(154, 205, 50, 100, 20 , 450, 10)
-w2 = Wall(154, 205, 50, 100, 480, 350, 10)
-w3 = Wall(154, 205, 50, 100, 20 , 10, 380)
-w4 = Wall(154, 205, 50, 200, 130, 10, 350)
-w5 = Wall(154, 205, 50, 450, 130, 10, 360)
-w6 = Wall(154, 205, 50, 300, 20, 10, 350)
-w7 = Wall(154, 205, 50, 390, 120, 130, 10)
+w1 = Wall(255, 0, 0, 100, 20 , 450, 10)
+w2 = Wall(255, 0, 0, 100, 480, 350, 10)
+w3 = Wall(255, 0, 0, 100, 20 , 10, 380)
+w4 = Wall(255, 0, 0, 200, 130, 10, 350)
+w5 = Wall(255, 0, 0, 450, 130, 10, 360)
+w6 = Wall(255, 0, 0, 300, 20, 10, 350)
+w7 = Wall(255, 0, 0, 390, 120, 130, 10)
 
 #Game characters:
-packman = Player('hero.png', 5, win_height - 80, 4)
-monster = Enemy('cyborg.png', win_width - 80, 280, 2)
-final = GameSprite('treasure.png', win_width - 120, win_height - 80, 0)
+packman = Player('PythonStart2-MazeGame/hero.png', 5, win_height - 80, 4)
+monster = Enemy('PythonStart2-MazeGame/cyborg.png', win_width - 80, 280, 2)
+final = GameSprite('PythonStart2-MazeGame/treasure.png', win_width - 120, win_height - 80, 0)
 
 game = True
 finish = False
@@ -101,11 +94,11 @@ lose = font.render('YOU LOSE!', True, (180, 0, 0))
 
 #music
 mixer.init()
-mixer.music.load('jungles.ogg')
+mixer.music.load('PythonStart2-MazeGame/pacman.mpeg')
 mixer.music.play()
 
-money = mixer.Sound('money.ogg')
-kick = mixer.Sound('kick.ogg')
+win_sound = mixer.Sound('PythonStart2-MazeGame/mario-win.mp3')
+lose_sound = mixer.Sound('PythonStart2-MazeGame/mario-lose.mp3')
 
 while game:
     for e in event.get():
@@ -133,13 +126,15 @@ while game:
         if sprite.collide_rect(packman, monster) or sprite.collide_rect(packman, w1) or sprite.collide_rect(packman, w2)or sprite.collide_rect(packman, w2)or sprite.collide_rect(packman, w3)or sprite.collide_rect(packman, w4)or sprite.collide_rect(packman, w5)or sprite.collide_rect(packman, w6)or sprite.collide_rect(packman, w7):
             finish = True
             window.blit(lose, (200, 200))
-            kick.play()
+            mixer.music.stop()
+            lose_sound.play()
 
         #Won game
         if sprite.collide_rect(packman, final):
             finish = True
             window.blit(win, (200, 200))
-            money.play()
+            mixer.music.stop()
+            win_sound.play()
 
     display.update()
     clock.tick(FPS)
